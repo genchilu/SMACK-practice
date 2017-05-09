@@ -22,11 +22,11 @@ func main() {
     config.Producer.Partitioner = sarama.NewRandomPartitioner
     config.Producer.Return.Successes = true
     msg := &sarama.ProducerMessage{}
-    msg.Topic = "hello"
+    msg.Topic = "topic1"
     msg.Partition = int32(-1)
     msg.Key = sarama.StringEncoder("key")
     msg.Value = sarama.ByteEncoder("aa bb cc")
-    producer, err := sarama.NewSyncProducer(strings.Split("192.168.99.111:9092", ","), config)
+    producer, err := sarama.NewSyncProducer(strings.Split(os.Args[1], ","), config)
     if err != nil {
         logger.Println("Failed to produce message: %s", err)
         os.Exit(500)
