@@ -1,12 +1,13 @@
 package url.genchi.kafka;
 
-//import com.test.schema.ContactType;
 import com.datastax.spark.connector.japi.CassandraJavaUtil;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.function.*;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
@@ -16,13 +17,9 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
 import scala.Tuple2;
-import static com.datastax.spark.connector.japi.CassandraJavaUtil.*;
-
 import java.util.*;
+import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapTupleToRow;
 
-/**
- * Created by sunilpatil on 1/11/17.
- */
 public class Consumer {
     public static void main(String[] argv) throws Exception{
 
@@ -36,8 +33,6 @@ public class Consumer {
         kafkaParams.put(ConsumerConfig.GROUP_ID_CONFIG,"group1");
         kafkaParams.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"latest");
         kafkaParams.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true);
-
-        //Configure Spark to listen messages in topic test
         Collection<String> topics = Arrays.asList("hello");
 
         SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("SparkKafka10WordCount")
